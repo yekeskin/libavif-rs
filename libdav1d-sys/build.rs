@@ -13,10 +13,14 @@ fn main() {
 
     meson.env("DESTDIR", &install_dir);
 
+    let host = env::var("HOST").expect("HOST");
     let target = env::var("TARGET").expect("TARGET");
+    let cwd = env::current_dir().unwrap();
 
-    if target == "i686-pc-windows-msvc" {
-        meson.arg("--cross-file").arg("i686-win-msvc.meson");
+    if target != host {
+        meson
+            .arg("--cross-file")
+            .arg(cwd.join("crossfiles/".to_owned() + target.as_str() + ".meson"));
     }
 
     let s = meson
